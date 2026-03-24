@@ -21,7 +21,13 @@ def info():
         "app": APP_NAME,
         "environment": APP_ENV,
         "version": APP_VERSION,
-        "message": "Version 1.0.1 deployed using Ansible"
+        "message": f"Version {APP_VERSION} deployed using Ansible"
+    })
+
+@app.route("/version")
+def version():
+    return jsonify({
+        "version": APP_VERSION
     })
 
 if __name__ == "__main__":
