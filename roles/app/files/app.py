@@ -13,7 +13,7 @@ def home():
 
 @app.route("/health")
 def health():
-    return jsonify({"status": "ok"})
+    return jsonify({"status": "broken"}), 500
 
 @app.route("/info")
 def info():
