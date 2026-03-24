@@ -1,0 +1,5 @@
+[app]
+178.104.77.63 ansible_user=root
+
+[monitoring]
+195.201.19.195 ansible_user=root

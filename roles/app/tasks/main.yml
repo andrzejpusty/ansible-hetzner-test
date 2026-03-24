@@ -1,0 +1,45 @@
+- name: Create app directory
+  file:
+    path: /opt/devops-app-2
+    state: directory
+
+- name: Copy app files
+  copy:
+    src: "{{ item }}"
+    dest: /opt/devops-app-2/
+  loop:
+    - app.py
+    - requirements.txt
+    - Dockerfile
+
+- name: Build Docker image
+  community.docker.docker_image:
+    name: devops-app-2
+    source: build
+    force_source: true
+    build:
+      path: /opt/devops-app-2
+      nocache: true
+
+- name: Stop old nginx test container if exists
+  community.docker.docker_container:
+    name: nginx-test
+    state: absent
+
+- name: Stop old devops-app-2 container if exists
+  community.docker.docker_container:
+    name: devops-app-2
+    state: absent
+
+- name: Run devops-app-2 container
+  community.docker.docker_container:
+    name: devops-app-2
+    image: devops-app-2
+    state: started
+    restart_policy: unless-stopped
+    published_ports:
+      - "127.0.0.1:5000:5000"
+    env:
+      APP_NAME: "{{ app_name }}"
+      APP_ENV: "{{ app_env }}"
+      APP_VERSION: "{{ app_version }}"

@@ -1,0 +1,19 @@
+- name: Configure app server
+  hosts: app
+  become: true
+
+  roles:
+    - docker
+    - app
+    - caddy
+
+- name: Configure monitoring server
+  hosts: monitoring
+  become: true
+
+- name: Configure monitoring server
+  hosts: monitoring
+  become: true
+
+  roles:
+    - monitoring

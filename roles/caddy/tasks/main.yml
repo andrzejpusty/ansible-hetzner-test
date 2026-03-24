@@ -1,0 +1,52 @@
+- name: Install required packages for Caddy
+  apt:
+    name:
+      - debian-keyring
+      - debian-archive-keyring
+      - apt-transport-https
+      - curl
+      - gpg
+    state: present
+    update_cache: yes
+
+- name: Create directory for APT keyrings
+  file:
+    path: /etc/apt/keyrings
+    state: directory
+    mode: '0755'
+
+- name: Download Caddy GPG key
+  shell: |
+    curl -1sLf 'https://dl.cloudsmith.io/public/caddy/stable/gpg.key' | gpg --dearmor -o /etc/apt/keyrings/caddy-stable-archive-keyring.gpg
+  args:
+    creates: /etc/apt/keyrings/caddy-stable-archive-keyring.gpg
+
+- name: Add Caddy repository
+  copy:
+    dest: /etc/apt/sources.list.d/caddy-stable.list
+    content: |
+      deb [signed-by=/etc/apt/keyrings/caddy-stable-archive-keyring.gpg] https://dl.cloudsmith.io/public/caddy/stable/deb/debian any-version main
+    mode: '0644'
+
+- name: Install Caddy
+  apt:
+    name: caddy
+    state: present
+    update_cache: yes
+
+- name: Copy Caddyfile
+  copy:
+    src: Caddyfile
+    dest: /etc/caddy/Caddyfile
+    mode: '0644'
+
+- name: Validate Caddy config
+  command: caddy validate --config /etc/caddy/Caddyfile
+  register: caddy_validate
+  changed_when: false
+
+- name: Ensure Caddy is enabled and restarted
+  systemd:
+    name: caddy
+    enabled: true
+    state: restarted

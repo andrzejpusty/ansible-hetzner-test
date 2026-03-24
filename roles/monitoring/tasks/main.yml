@@ -1,0 +1,4 @@
+- name: Install basic tools on monitoring server
+  apt:
+    name: "{{ monitoring_packages }}"
+    state: present
