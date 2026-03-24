@@ -27,4 +27,4 @@ jobs:
 
       - name: Deploy with Ansible
         run: |
-          ansible-playbook playbook.yml
+          ansible-playbook playbook.yml --limit app
