@@ -11,9 +11,5 @@
   hosts: monitoring
   become: true
 
-- name: Configure monitoring server
-  hosts: monitoring
-  become: true
-
   roles:
     - monitoring
