@@ -39,6 +39,10 @@ jobs:
           }
           EOF
 
+      - name: Terraform init
+        run: |
+          terraform -chdir=terraform-hetzner init
+
       - name: Generate inventory from Terraform
         run: |
           APP_IP=$(terraform -chdir=terraform-hetzner output -raw app_server_ip)
