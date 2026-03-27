@@ -39,7 +39,7 @@ jobs:
           }
           EOF
 
-      - name: Generate inventory from Terraform outputs
+      - name: Generate inventory from Terraform
         run: |
           APP_IP=$(terraform -chdir=terraform-hetzner output -raw app_server_ip)
           MONITORING_IP=$(terraform -chdir=terraform-hetzner output -raw monitoring_server_ip)
@@ -52,7 +52,7 @@ jobs:
           ${MONITORING_IP} ansible_user=root
           EOF
 
-          echo "Generated inventory:"
+          echo "Inventory:"
           cat inventory
 
           echo "APP_IP=${APP_IP}" >> $GITHUB_ENV
