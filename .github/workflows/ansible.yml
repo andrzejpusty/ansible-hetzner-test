@@ -8,21 +8,63 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repo
+      - name: Checkout ansible repo
         uses: actions/checkout@v4
 
-      - name: Install Ansible
+      - name: Checkout terraform repo
+        uses: actions/checkout@v4
+        with:
+          repository: andrzejpusty/terraform-hetzner
+          path: terraform-hetzner
+
+      - name: Install Ansible and Terraform
         run: |
           sudo apt update
-          sudo apt install -y ansible
+          sudo apt install -y ansible unzip wget
+          wget -q https://releases.hashicorp.com/terraform/1.14.8/terraform_1.14.8_linux_amd64.zip
+          unzip terraform_1.14.8_linux_amd64.zip
+          sudo mv terraform /usr/local/bin/
+          terraform version
+
+      - name: Setup Terraform Cloud token
+        run: |
+          mkdir -p ~/.terraform.d
+          cat > ~/.terraform.d/credentials.tfrc.json <<EOF
+          {
+            "credentials": {
+              "app.terraform.io": {
+                "token": "${{ secrets.TF_API_TOKEN }}"
+              }
+            }
+          }
+          EOF
+
+      - name: Generate inventory from Terraform outputs
+        run: |
+          APP_IP=$(terraform -chdir=terraform-hetzner output -raw app_server_ip)
+          MONITORING_IP=$(terraform -chdir=terraform-hetzner output -raw monitoring_server_ip)
+
+          cat > inventory <<EOF
+          [app]
+          ${APP_IP} ansible_user=root
+
+          [monitoring]
+          ${MONITORING_IP} ansible_user=root
+          EOF
+
+          echo "Generated inventory:"
+          cat inventory
+
+          echo "APP_IP=${APP_IP}" >> $GITHUB_ENV
+          echo "MONITORING_IP=${MONITORING_IP}" >> $GITHUB_ENV
 
       - name: Setup SSH key
         run: |
           mkdir -p ~/.ssh
           echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_ed25519
           chmod 600 ~/.ssh/id_ed25519
-          ssh-keyscan -H 178.104.14.77 >> ~/.ssh/known_hosts
-          ssh-keyscan -H 195.201.19.195 >> ~/.ssh/known_hosts
+          ssh-keyscan -H "$APP_IP" >> ~/.ssh/known_hosts
+          ssh-keyscan -H "$MONITORING_IP" >> ~/.ssh/known_hosts
 
       - name: Run Ansible playbook
         run: |
