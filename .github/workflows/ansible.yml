@@ -2,6 +2,8 @@ name: Ansible Deploy
 
 on:
   workflow_dispatch:
+  repository_dispatch:
+    types: [terraform-apply-finished]
 
 jobs:
   deploy:
