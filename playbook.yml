@@ -1,13 +1,15 @@
-- name: Configure app server
+- name: Full provision app server
   hosts: app
   become: true
 
   roles:
     - docker
     - app
+    - app_prod
+    - app_dev
     - caddy
 
-- name: Configure monitoring server
+- name: Full provision monitoring server
   hosts: monitoring
   become: true
 

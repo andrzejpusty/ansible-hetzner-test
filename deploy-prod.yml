@@ -1,0 +1,9 @@
+- name: Deploy PROD app
+  hosts: app
+  become: true
+
+  roles:
+    - docker
+    - app
+    - app_prod
+    - caddy
