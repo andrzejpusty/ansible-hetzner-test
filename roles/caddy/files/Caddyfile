@@ -1,3 +1,7 @@
 app.andrzejpusty.pl {
     reverse_proxy 127.0.0.1:5000
 }
+
+dev.app.andrzejpusty.pl {
+    reverse_proxy 127.0.0.1:5001
+}
