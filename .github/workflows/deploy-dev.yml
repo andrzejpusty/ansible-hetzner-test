@@ -1,13 +1,10 @@
-name: Deploy PROD
+name: Deploy DEV
 
 on:
-  push:
-    branches:
-      - main
   workflow_dispatch:
 
 jobs:
-  deploy-prod:
+  deploy-dev:
     runs-on: ubuntu-latest
 
     steps:
@@ -26,13 +23,6 @@ jobs:
           chmod 600 ~/.ssh/id_ed25519
           ssh-keyscan -H ${{ secrets.SERVER_IP }} >> ~/.ssh/known_hosts
 
-      - name: Deploy PROD with Ansible
+      - name: Deploy DEV with Ansible
         run: |
-          ansible-playbook deploy-prod.yml --limit app
-
-      - name: Wait for PROD app to come up
-        run: sleep 10
-
-      - name: Check PROD app health
-        run: |
-          curl --fail --silent https://app.andrzejpusty.pl/health
+          ansible-playbook deploy-dev.yml --limit app
