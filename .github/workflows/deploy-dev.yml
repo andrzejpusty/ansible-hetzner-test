@@ -26,3 +26,10 @@ jobs:
       - name: Deploy DEV with Ansible
         run: |
           ansible-playbook deploy-dev.yml --limit app
+
+      - name: Wait for DEV app to come up
+        run: sleep 10
+
+      - name: Check DEV app health
+        run: |
+          curl --fail --silent https://dev.app.andrzejpusty.pl/health
