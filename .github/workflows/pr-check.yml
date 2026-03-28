@@ -1,0 +1,31 @@
+name: PR Check
+
+on:
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  pr-check:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Install Ansible
+        run: |
+          sudo apt update
+          sudo apt install -y ansible
+
+      - name: Syntax check full provision playbook
+        run: |
+          ansible-playbook playbook.yml --syntax-check
+
+      - name: Syntax check DEV deploy playbook
+        run: |
+          ansible-playbook deploy-dev.yml --syntax-check
+
+      - name: Syntax check PROD deploy playbook
+        run: |
+          ansible-playbook deploy-prod.yml --syntax-check
