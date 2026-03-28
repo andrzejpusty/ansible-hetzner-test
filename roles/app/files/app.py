@@ -21,7 +21,7 @@ def info():
         "app": APP_NAME,
         "environment": APP_ENV,
         "version": APP_VERSION,
-        "message": f"Version {APP_VERSION} deployed using Ansible"
+        "message": f"Version {APP_VERSION} DEV branch deployment test"
     })
 
 @app.route("/version")
