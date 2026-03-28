@@ -1,0 +1,17 @@
+- name: Stop old devops-app-dev container if exists
+  community.docker.docker_container:
+    name: devops-app-dev
+    state: absent
+
+- name: Run devops-app-dev container
+  community.docker.docker_container:
+    name: devops-app-dev
+    image: devops-app-2
+    state: started
+    restart_policy: unless-stopped
+    published_ports:
+      - "127.0.0.1:5001:5000"
+    env:
+      APP_NAME: "devops-app-dev"
+      APP_ENV: "dev"
+      APP_VERSION: "dev"
