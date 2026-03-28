@@ -28,7 +28,8 @@ jobs:
 
       - name: Deploy DEV with Ansible
         run: |
-          ansible-playbook deploy-dev.yml --limit app
+          SHORT_SHA=$(echo "${GITHUB_SHA}" | cut -c1-7)
+          ansible-playbook deploy-dev.yml --limit app -e "app_version=dev-${SHORT_SHA}"
 
       - name: Wait for DEV app to come up
         run: sleep 10

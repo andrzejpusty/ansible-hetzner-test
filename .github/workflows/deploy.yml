@@ -28,7 +28,8 @@ jobs:
 
       - name: Deploy PROD with Ansible
         run: |
-          ansible-playbook deploy-prod.yml --limit app
+          SHORT_SHA=$(echo "${GITHUB_SHA}" | cut -c1-7)
+          ansible-playbook deploy-prod.yml --limit app -e "app_version=prod-${SHORT_SHA}"
 
       - name: Wait for PROD app to come up
         run: sleep 10

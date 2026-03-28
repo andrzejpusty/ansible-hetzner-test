@@ -14,4 +14,4 @@
     env:
       APP_NAME: "devops-app-dev"
       APP_ENV: "dev"
-      APP_VERSION: "dev"
+      APP_VERSION: "{{ app_version }}"
