@@ -21,7 +21,7 @@ def info():
         "app": APP_NAME,
         "environment": APP_ENV,
         "version": APP_VERSION,
-        "message": f"Version {APP_VERSION} DEV branch deployment testy"
+        "message": f"Version {APP_VERSION} DEV deploy from VS Code"
     })
 
 @app.route("/version")
