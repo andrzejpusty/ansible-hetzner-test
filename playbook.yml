@@ -16,3 +16,4 @@
 
   roles:
     - monitoring
+    - node_exporter
