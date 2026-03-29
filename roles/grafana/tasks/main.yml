@@ -1,38 +1,3 @@
-- name: Ensure required packages for Grafana repo are installed
-  apt:
-    name:
-      - gnupg
-      - apt-transport-https
-      - software-properties-common
-      - ca-certificates
-      - wget
-    state: present
-    update_cache: true
-
-- name: Create Grafana keyrings directory
-  file:
-    path: /etc/apt/keyrings
-    state: directory
-    mode: "0755"
-
-- name: Remove old Grafana keyring if present
-  file:
-    path: /etc/apt/keyrings/grafana.gpg
-    state: absent
-
-- name: Download and install Grafana GPG key
-  shell: |
-    wget -q -O - https://apt.grafana.com/gpg.key | gpg --dearmor | tee /etc/apt/keyrings/grafana.gpg > /dev/null
-  args:
-    creates: /etc/apt/keyrings/grafana.gpg
-
-- name: Set permissions on Grafana keyring
-  file:
-    path: /etc/apt/keyrings/grafana.gpg
-    owner: root
-    group: root
-    mode: "0644"
-
 - name: Add Grafana repository
   copy:
     dest: /etc/apt/sources.list.d/grafana.list
@@ -40,7 +5,7 @@
     content: |
       deb [signed-by=/etc/apt/keyrings/grafana.gpg] https://apt.grafana.com stable main
 
-- name: Update apt cache
+- name: Update apt cache after adding Grafana repo
   apt:
     update_cache: true
 
