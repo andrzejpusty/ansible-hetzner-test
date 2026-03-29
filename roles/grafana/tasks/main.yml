@@ -1,0 +1,21 @@
+- name: Add Grafana repository
+  copy:
+    dest: /etc/apt/sources.list.d/grafana.list
+    mode: "0644"
+    content: |
+      deb [signed-by=/etc/apt/keyrings/grafana.gpg] https://apt.grafana.com stable main
+
+- name: Update apt cache
+  apt:
+    update_cache: true
+
+- name: Install Grafana
+  apt:
+    name: grafana
+    state: present
+
+- name: Enable and start Grafana
+  systemd:
+    name: grafana-server
+    enabled: true
+    state: started
