@@ -1,9 +1,43 @@
-- name: Deploy DEV app
-  hosts: app
-  become: true
+name: Deploy DEV
 
-  roles:
-    - docker
-    - app
-    - app_dev
-    - caddy
+on:
+  workflow_run:
+    workflows: ["Build and Push Docker Image"]
+    types:
+      - completed
+  workflow_dispatch:
+
+jobs:
+  deploy-dev:
+    if: ${{ github.event.workflow_run.conclusion == 'success' && github.event.workflow_run.head_branch == 'dev' }}
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+        with:
+          ref: dev
+
+      - name: Install Ansible
+        run: |
+          sudo apt update
+          sudo apt install -y ansible
+
+      - name: Setup SSH
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_ed25519
+          chmod 600 ~/.ssh/id_ed25519
+          ssh-keyscan -H ${{ secrets.SERVER_IP }} >> ~/.ssh/known_hosts
+
+      - name: Deploy DEV with Ansible
+        run: |
+          SHORT_SHA=$(echo "${GITHUB_SHA}" | cut -c1-7)
+          ansible-playbook deploy-dev.yml --limit app -e "app_version=dev-${SHORT_SHA}"
+
+      - name: Wait for DEV app to come up
+        run: sleep 10
+
+      - name: Check DEV app health
+        run: |
+          curl --fail --silent https://dev.app.andrzejpusty.pl/health
