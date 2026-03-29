@@ -5,7 +5,7 @@
     content: |
       deb [signed-by=/etc/apt/keyrings/grafana.gpg] https://apt.grafana.com stable main
 
-- name: Update apt cache
+- name: Update apt cache after adding Grafana repo
   apt:
     update_cache: true
 
