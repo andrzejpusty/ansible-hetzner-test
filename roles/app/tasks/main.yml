@@ -1,26 +1,3 @@
-- name: Create app directory
-  file:
-    path: /opt/devops-app-2
-    state: directory
-
-- name: Copy app files
-  copy:
-    src: "{{ item }}"
-    dest: /opt/devops-app-2/
-  loop:
-    - app.py
-    - requirements.txt
-    - Dockerfile
-
-- name: Build Docker image
-  community.docker.docker_image:
-    name: devops-app-2
-    source: build
-    force_source: true
-    build:
-      path: /opt/devops-app-2
-      nocache: true
-
 - name: Stop old nginx test container if exists
   community.docker.docker_container:
     name: nginx-test
