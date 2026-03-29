@@ -8,6 +8,7 @@
     - app_prod
     - app_dev
     - caddy
+    - node_exporter
 
 - name: Full provision monitoring server
   hosts: monitoring
