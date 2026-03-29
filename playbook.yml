@@ -17,3 +17,4 @@
   roles:
     - monitoring
     - node_exporter
+    - prometheus
