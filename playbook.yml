@@ -18,3 +18,4 @@
     - monitoring
     - node_exporter
     - prometheus
+    - blackbox_exporter
