@@ -1,0 +1,77 @@
+- name: Create blackbox_exporter user
+  user:
+    name: blackbox_exporter
+    shell: /usr/sbin/nologin
+    system: true
+    create_home: false
+
+- name: Create blackbox_exporter config directory
+  file:
+    path: /etc/blackbox_exporter
+    state: directory
+    owner: blackbox_exporter
+    group: blackbox_exporter
+    mode: "0755"
+
+- name: Download blackbox_exporter
+  get_url:
+    url: https://github.com/prometheus/blackbox_exporter/releases/download/v0.28.0/blackbox_exporter-0.28.0.linux-amd64.tar.gz
+    dest: /tmp/blackbox_exporter.tar.gz
+    mode: "0644"
+
+- name: Extract blackbox_exporter archive
+  unarchive:
+    src: /tmp/blackbox_exporter.tar.gz
+    dest: /tmp
+    remote_src: true
+
+- name: Copy blackbox_exporter binary
+  copy:
+    src: /tmp/blackbox_exporter-0.28.0.linux-amd64/blackbox_exporter
+    dest: /usr/local/bin/blackbox_exporter
+    remote_src: true
+    owner: root
+    group: root
+    mode: "0755"
+
+- name: Install blackbox_exporter config
+  copy:
+    dest: /etc/blackbox_exporter/blackbox.yml
+    owner: blackbox_exporter
+    group: blackbox_exporter
+    mode: "0644"
+    content: |
+      modules:
+        http_2xx:
+          prober: http
+          timeout: 5s
+          http:
+            preferred_ip_protocol: ip4
+
+- name: Create systemd service for blackbox_exporter
+  copy:
+    dest: /etc/systemd/system/blackbox_exporter.service
+    mode: "0644"
+    content: |
+      [Unit]
+      Description=Blackbox Exporter
+      After=network.target
+
+      [Service]
+      User=blackbox_exporter
+      Group=blackbox_exporter
+      Type=simple
+      ExecStart=/usr/local/bin/blackbox_exporter --config.file=/etc/blackbox_exporter/blackbox.yml
+
+      [Install]
+      WantedBy=multi-user.target
+
+- name: Reload systemd
+  systemd:
+    daemon_reload: true
+
+- name: Enable and start blackbox_exporter
+  systemd:
+    name: blackbox_exporter
+    enabled: true
+    state: started

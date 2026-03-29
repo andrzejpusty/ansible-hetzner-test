@@ -69,6 +69,22 @@
           static_configs:
             - targets: ['195.201.19.195:9100']
 
+        - job_name: blackbox_https
+          metrics_path: /probe
+          params:
+            module: [http_2xx]
+          static_configs:
+            - targets:
+                - https://app.andrzejpusty.pl/health
+                - https://dev.app.andrzejpusty.pl/health
+          relabel_configs:
+            - source_labels: [__address__]
+              target_label: __param_target
+            - source_labels: [__param_target]
+              target_label: instance
+            - target_label: __address__
+              replacement: 195.201.19.195:9115
+
 - name: Create systemd service for Prometheus
   copy:
     dest: /etc/systemd/system/prometheus.service
@@ -106,3 +122,8 @@
     name: prometheus
     enabled: true
     state: started
+
+- name: Restart Prometheus
+  systemd:
+    name: prometheus
+    state: restarted
