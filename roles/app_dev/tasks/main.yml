@@ -1,3 +1,9 @@
+- name: Pull DEV image from registry
+  community.docker.docker_image:
+    name: "{{ app_image_name }}:dev"
+    source: pull
+    force_source: true
+
 - name: Stop old devops-app-dev container if exists
   community.docker.docker_container:
     name: devops-app-dev
@@ -6,7 +12,7 @@
 - name: Run devops-app-dev container
   community.docker.docker_container:
     name: devops-app-dev
-    image: devops-app-2
+    image: "{{ app_image_name }}:dev"
     state: started
     restart_policy: unless-stopped
     published_ports:

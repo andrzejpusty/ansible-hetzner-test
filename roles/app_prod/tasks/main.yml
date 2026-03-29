@@ -1,3 +1,9 @@
+- name: Pull PROD image from registry
+  community.docker.docker_image:
+    name: "{{ app_image_name }}:prod"
+    source: pull
+    force_source: true
+
 - name: Stop old devops-app-prod container if exists
   community.docker.docker_container:
     name: devops-app-prod
@@ -6,7 +12,7 @@
 - name: Run devops-app-prod container
   community.docker.docker_container:
     name: devops-app-prod
-    image: devops-app-2
+    image: "{{ app_image_name }}:prod"
     state: started
     restart_policy: unless-stopped
     published_ports:

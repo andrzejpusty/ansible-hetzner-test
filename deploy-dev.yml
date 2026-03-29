@@ -1,9 +1,8 @@
-- name: Deploy DEV app
+---
+- name: Deploy DEV
   hosts: app
   become: true
 
   roles:
-    - docker
     - app
     - app_dev
-    - caddy
