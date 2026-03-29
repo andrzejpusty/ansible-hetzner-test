@@ -21,7 +21,7 @@ def info():
         "app": APP_NAME,
         "environment": APP_ENV,
         "version": APP_VERSION,
-        "message": f"Version {APP_VERSION} test auto merge"
+        "message": f"Version {APP_VERSION} test auto merge 2"
     })
 
 @app.route("/version")
